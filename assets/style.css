@@ -1,7 +1,39 @@
 body {
-	margin: 10px;
+	background-color: #F3F3F3;
+	margin: 90px 250px;
+}
+
+p {
+	font-size: 18px;
+	line-height: 1.8em;
+}
+
+h1 {
+	font-size: 32px;
+}
+
+h2 {
+	font-size: 27px;
+}
+
+a {
+	text-decoration: none;
+}
+#profile {
+	/*background-color: red;*/
+	display: inline-flex;
 }
 
 #mugshot {
-	height: 40px;
+	height: 200px;
+	margin-right: 40px;
+	margin-bottom: 30px;
+}
+
+.heading {
+	color: #203647;
+}
+
+hr.solid {
+	margin: 25px 0;
 }
