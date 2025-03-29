@@ -16,8 +16,8 @@ except:
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
 
-FINETUNED_MODEL_PATH = "path_to_finetuned_model"
-OUTPUT_DIR = "output_path"
+FINETUNED_MODEL_PATH = "/scratch/sk12184/output/checkpoint-652/"
+OUTPUT_DIR = "./"
 
 # Create output directory if it doesn't exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
