@@ -5,7 +5,21 @@ import matplotlib.pyplot as plt
 from pyvis.network import Network
 import spacy
 from tqdm import tqdm
+import argparse
 import os
+
+
+# Parse arguments
+parser = argparse.ArgumentParser(description="Knowledge Graph Generator")
+parser.add_argument("--model_path", type=str, required=True, help="Path to the fine-tuned model")
+parser.add_argument("--output_dir", type=str, default="./", help="Directory to save outputs")
+args = parser.parse_args()
+
+FINETUNED_MODEL_PATH = args.model_path
+OUTPUT_DIR = args.output_dir
+
+# Create output directory if it doesn't exist
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Load spaCy for NLP processing
 try:
@@ -15,12 +29,6 @@ except:
     from spacy.cli import download
     download("en_core_web_sm")
     nlp = spacy.load("en_core_web_sm")
-
-FINETUNED_MODEL_PATH = "/scratch/sk12184/output/checkpoint-652/"
-OUTPUT_DIR = "./"
-
-# Create output directory if it doesn't exist
-os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Load the fine-tuned model and tokenizer
 tokenizer = AutoTokenizer.from_pretrained(FINETUNED_MODEL_PATH)
