@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"group": "entity", "id": "Droughts", "label": "Droughts", "shape": "dot", "title": "Droughts (entity)"}, {"group": "entity", "id": "natural hazard", "label": "natural hazard", "shape": "dot", "title": "natural hazard (entity)"}, {"group": "entity", "id": "cascading impacts", "label": "cascading impacts", "shape": "dot", "title": "cascading impacts (entity)"}, {"group": "entity", "id": "Cascading impacts", "label": "Cascading impacts", "shape": "dot", "title": "Cascading impacts (entity)"}, {"group": "entity", "id": "economic sectors", "label": "economic sectors", "shape": "dot", "title": "economic sectors (entity)"}, {"group": "entity", "id": "environment", "label": "environment", "shape": "dot", "title": "environment (entity)"}, {"group": "entity", "id": "society", "label": "society", "shape": "dot", "title": "society (entity)"}, {"group": "entity", "id": "agriculture production losses", "label": "agriculture production losses", "shape": "dot", "title": "agriculture production losses (entity)"}, {"group": "entity", "id": "intense wildfires", "label": "intense wildfires", "shape": "dot", "title": "intense wildfires (entity)"}, {"group": "entity", "id": "waterways disruptions", "label": "waterways disruptions", "shape": "dot", "title": "waterways disruptions (entity)"}, {"group": "entity", "id": "water supply shortages", "label": "water supply shortages", "shape": "dot", "title": "water supply shortages (entity)"}, {"group": "entity", "id": "Improved drought forecasts", "label": "Improved drought forecasts", "shape": "dot", "title": "Improved drought forecasts (entity)"}, {"group": "entity", "id": "deal with impacts", "label": "deal with impacts", "shape": "dot", "title": "deal with impacts (entity)"}, {"group": "entity", "id": "Accurate forecasting of drought", "label": "Accurate forecasting of drought", "shape": "dot", "title": "Accurate forecasting of drought (entity)"}, {"group": "entity", "id": "a challenge", "label": "a challenge", "shape": "dot", "title": "a challenge (entity)"}, {"group": "entity", "id": "Climate change", "label": "Climate change", "shape": "dot", "title": "Climate change (entity)"}, {"group": "entity", "id": "forecasting challenge", "label": "forecasting challenge", "shape": "dot", "title": "forecasting challenge (entity)"}, {"group": "entity", "id": "Drought indices", "label": "Drought indices", "shape": "dot", "title": "Drought indices (entity)"}, {"group": "entity", "id": "monitor droughts", "label": "monitor droughts", "shape": "dot", "title": "monitor droughts (entity)"}, {"group": "entity", "id": "quantify droughts", "label": "quantify droughts", "shape": "dot", "title": "quantify droughts (entity)"}, {"group": "entity", "id": "Several drought indices", "label": "Several drought indices", "shape": "dot", "title": "Several drought indices (entity)"}, {"group": "entity", "id": "with different complexities", "label": "with different complexities", "shape": "dot", "title": "with different complexities (entity)"}, {"group": "entity", "id": "Standardized Precipitation Index (SPI)", "label": "Standardized Precipitation Index (SPI)", "shape": "dot", "title": "Standardized Precipitation Index (SPI) (entity)"}, {"group": "entity", "id": "a drought index", "label": "a drought index", "shape": "dot", "title": "a drought index (entity)"}, {"group": "entity", "id": "Standardized Precipitation Evapo-Transpiration Index (SPEI)", "label": "Standardized Precipitation Evapo-Transpiration Index (SPEI)", "shape": "dot", "title": "Standardized Precipitation Evapo-Transpiration Index (SPEI) (entity)"}, {"group": "entity", "id": "SPEI", "label": "SPEI", "shape": "dot", "title": "SPEI (entity)"}, {"group": "entity", "id": "atmospheric water balance", "label": "atmospheric water balance", "shape": "dot", "title": "atmospheric water balance (entity)"}, {"group": "entity", "id": "climate change context", "label": "climate change context", "shape": "dot", "title": "climate change context (entity)"}, {"group": "entity", "id": "Several approaches", "label": "Several approaches", "shape": "dot", "title": "Several approaches (entity)"}, {"group": "entity", "id": "to forecast SPEI", "label": "to forecast SPEI", "shape": "dot", "title": "to forecast SPEI (entity)"}, {"group": "entity", "id": "Approaches", "label": "Approaches", "shape": "dot", "title": "Approaches (entity)"}, {"group": "entity", "id": "stochastic techniques", "label": "stochastic techniques", "shape": "dot", "title": "stochastic techniques (entity)"}, {"group": "entity", "id": "probabilistic techniques", "label": "probabilistic techniques", "shape": "dot", "title": "probabilistic techniques (entity)"}, {"group": "entity", "id": "machine learning techniques", "label": "machine learning techniques", "shape": "dot", "title": "machine learning techniques (entity)"}, {"group": "entity", "id": "Artificial Neural Network (ANN)", "label": "Artificial Neural Network (ANN)", "shape": "dot", "title": "Artificial Neural Network (ANN) (entity)"}, {"group": "entity", "id": "drought forecasting", "label": "drought forecasting", "shape": "dot", "title": "drought forecasting (entity)"}, {"group": "entity", "id": "Long Short-Term Memory (LSTM)", "label": "Long Short-Term Memory (LSTM)", "shape": "dot", "title": "Long Short-Term Memory (LSTM) (entity)"}, {"group": "entity", "id": "Convolutional LSTM", "label": "Convolutional LSTM", "shape": "dot", "title": "Convolutional LSTM (entity)"}, {"group": "entity", "id": "Wavelet ANN", "label": "Wavelet ANN", "shape": "dot", "title": "Wavelet ANN (entity)"}, {"group": "entity", "id": "Integrated ANN", "label": "Integrated ANN", "shape": "dot", "title": "Integrated ANN (entity)"}, {"group": "entity", "id": "Hybrid neural network", "label": "Hybrid neural network", "shape": "dot", "title": "Hybrid neural network (entity)"}, {"group": "entity", "id": "multiple models", "label": "multiple models", "shape": "dot", "title": "multiple models (entity)"}, {"group": "entity", "id": "different losses", "label": "different losses", "shape": "dot", "title": "different losses (entity)"}, {"group": "entity", "id": "drought forecasting accuracy", "label": "drought forecasting accuracy", "shape": "dot", "title": "drought forecasting accuracy (entity)"}, {"group": "entity", "id": "Existing work", "label": "Existing work", "shape": "dot", "title": "Existing work (entity)"}, {"group": "entity", "id": "evaluation of extreme drought", "label": "evaluation of extreme drought", "shape": "dot", "title": "evaluation of extreme drought (entity)"}, {"group": "entity", "id": "analysis of extreme drought", "label": "analysis of extreme drought", "shape": "dot", "title": "analysis of extreme drought (entity)"}, {"group": "entity", "id": "evaluation of severe wet events", "label": "evaluation of severe wet events", "shape": "dot", "title": "evaluation of severe wet events (entity)"}, {"group": "entity", "id": "analysis of severe wet events", "label": "analysis of severe wet events", "shape": "dot", "title": "analysis of severe wet events (entity)"}, {"group": "entity", "id": "Imbalance in time-series", "label": "Imbalance in time-series", "shape": "dot", "title": "Imbalance in time-series (entity)"}, {"group": "entity", "id": "forecasting extreme events", "label": "forecasting extreme events", "shape": "dot", "title": "forecasting extreme events (entity)"}, {"group": "entity", "id": "Extremely dry events", "label": "Extremely dry events", "shape": "dot", "title": "Extremely dry events (entity)"}, {"group": "entity", "id": "few", "label": "few", "shape": "dot", "title": "few (entity)"}, {"group": "entity", "id": "Extremely wet events", "label": "Extremely wet events", "shape": "dot", "title": "Extremely wet events (entity)"}, {"group": "entity", "id": "Few extreme events", "label": "Few extreme events", "shape": "dot", "title": "Few extreme events (entity)"}, {"group": "entity", "id": "forecasting", "label": "forecasting", "shape": "dot", "title": "forecasting (entity)"}, {"group": "entity", "id": "This paper", "label": "This paper", "shape": "dot", "title": "This paper (entity)"}, {"group": "entity", "id": "SQUASH loss function", "label": "SQUASH loss function", "shape": "dot", "title": "SQUASH loss function (entity)"}, {"group": "entity", "id": "differentiable", "label": "differentiable", "shape": "dot", "title": "differentiable (entity)"}, {"group": "entity", "id": "shape error", "label": "shape error", "shape": "dot", "title": "shape error (entity)"}, {"group": "entity", "id": "imbalanced data", "label": "imbalanced data", "shape": "dot", "title": "imbalanced data (entity)"}, {"group": "entity", "id": "computationally efficient", "label": "computationally efficient", "shape": "dot", "title": "computationally efficient (entity)"}, {"group": "entity", "id": "multi-step SPEI forecasting", "label": "multi-step SPEI forecasting", "shape": "dot", "title": "multi-step SPEI forecasting (entity)"}, {"group": "entity", "id": "Validation", "label": "Validation", "shape": "dot", "title": "Validation (entity)"}, {"group": "entity", "id": "USA", "label": "USA", "shape": "dot", "title": "USA (entity)"}, {"group": "entity", "id": "India", "label": "India", "shape": "dot", "title": "India (entity)"}, {"group": "entity", "id": "This article", "label": "This article", "shape": "dot", "title": "This article (entity)"}, {"group": "entity", "id": "ablation study", "label": "ablation study", "shape": "dot", "title": "ablation study (entity)"}, {"group": "entity", "id": "Ablation study", "label": "Ablation study", "shape": "dot", "title": "Ablation study (entity)"}, {"group": "entity", "id": "different surrogate loss functions", "label": "different surrogate loss functions", "shape": "dot", "title": "different surrogate loss functions (entity)"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Droughts", "label": "are", "title": "are", "to": "natural hazard"}, {"arrows": "to", "from": "Droughts", "label": "have", "title": "have", "to": "cascading impacts"}, {"arrows": "to", "from": "Droughts", "label": "lead to", "title": "lead to", "to": "agriculture production losses"}, {"arrows": "to", "from": "Droughts", "label": "lead to", "title": "lead to", "to": "intense wildfires"}, {"arrows": "to", "from": "Droughts", "label": "lead to", "title": "lead to", "to": "waterways disruptions"}, {"arrows": "to", "from": "Droughts", "label": "lead to", "title": "lead to", "to": "water supply shortages"}, {"arrows": "to", "from": "Cascading impacts", "label": "affect", "title": "affect", "to": "economic sectors"}, {"arrows": "to", "from": "Cascading impacts", "label": "affect", "title": "affect", "to": "environment"}, {"arrows": "to", "from": "Cascading impacts", "label": "affect", "title": "affect", "to": "society"}, {"arrows": "to", "from": "Improved drought forecasts", "label": "help", "title": "help", "to": "deal with impacts"}, {"arrows": "to", "from": "Accurate forecasting of drought", "label": "is", "title": "is", "to": "a challenge"}, {"arrows": "to", "from": "Climate change", "label": "compounds", "title": "compounds", "to": "forecasting challenge"}, {"arrows": "to", "from": "Drought indices", "label": "are used to", "title": "are used to", "to": "monitor droughts"}, {"arrows": "to", "from": "Drought indices", "label": "are used to", "title": "are used to", "to": "quantify droughts"}, {"arrows": "to", "from": "Several drought indices", "label": "have been proposed", "title": "have been proposed", "to": "with different complexities"}, {"arrows": "to", "from": "Standardized Precipitation Index (SPI)", "label": "is", "title": "is", "to": "a drought index"}, {"arrows": "to", "from": "Standardized Precipitation Evapo-Transpiration Index (SPEI)", "label": "is", "title": "is", "to": "a drought index"}, {"arrows": "to", "from": "SPEI", "label": "takes into account", "title": "takes into account", "to": "atmospheric water balance"}, {"arrows": "to", "from": "SPEI", "label": "is suited for", "title": "is suited for", "to": "climate change context"}, {"arrows": "to", "from": "Several approaches", "label": "have been proposed", "title": "have been proposed", "to": "to forecast SPEI"}, {"arrows": "to", "from": "Approaches", "label": "include", "title": "include", "to": "stochastic techniques"}, {"arrows": "to", "from": "Approaches", "label": "include", "title": "include", "to": "probabilistic techniques"}, {"arrows": "to", "from": "Approaches", "label": "include", "title": "include", "to": "machine learning techniques"}, {"arrows": "to", "from": "Artificial Neural Network (ANN)", "label": "is used for", "title": "is used for", "to": "drought forecasting"}, {"arrows": "to", "from": "Long Short-Term Memory (LSTM)", "label": "is used for", "title": "is used for", "to": "drought forecasting"}, {"arrows": "to", "from": "Convolutional LSTM", "label": "is used for", "title": "is used for", "to": "drought forecasting"}, {"arrows": "to", "from": "Wavelet ANN", "label": "is used for", "title": "is used for", "to": "drought forecasting"}, {"arrows": "to", "from": "Integrated ANN", "label": "is used for", "title": "is used for", "to": "drought forecasting"}, {"arrows": "to", "from": "Hybrid neural network", "label": "combines", "title": "combines", "to": "multiple models"}, {"arrows": "to", "from": "Hybrid neural network", "label": "is trained with", "title": "is trained with", "to": "different losses"}, {"arrows": "to", "from": "Hybrid neural network", "label": "improves", "title": "improves", "to": "drought forecasting accuracy"}, {"arrows": "to", "from": "Existing work", "label": "does not emphasize", "title": "does not emphasize", "to": "evaluation of extreme drought"}, {"arrows": "to", "from": "Existing work", "label": "does not emphasize", "title": "does not emphasize", "to": "analysis of extreme drought"}, {"arrows": "to", "from": "Existing work", "label": "does not emphasize", "title": "does not emphasize", "to": "evaluation of severe wet events"}, {"arrows": "to", "from": "Existing work", "label": "does not emphasize", "title": "does not emphasize", "to": "analysis of severe wet events"}, {"arrows": "to", "from": "Imbalance in time-series", "label": "makes difficult", "title": "makes difficult", "to": "forecasting extreme events"}, {"arrows": "to", "from": "Extremely dry events", "label": "are", "title": "are", "to": "few"}, {"arrows": "to", "from": "Extremely wet events", "label": "are", "title": "are", "to": "few"}, {"arrows": "to", "from": "Few extreme events", "label": "make difficult", "title": "make difficult", "to": "forecasting"}, {"arrows": "to", "from": "This paper", "label": "develops", "title": "develops", "to": "SQUASH loss function"}, {"arrows": "to", "from": "This paper", "label": "validates", "title": "validates", "to": "multi-step SPEI forecasting"}, {"arrows": "to", "from": "SQUASH loss function", "label": "is", "title": "is", "to": "differentiable"}, {"arrows": "to", "from": "SQUASH loss function", "label": "captures", "title": "captures", "to": "shape error"}, {"arrows": "to", "from": "SQUASH loss function", "label": "handles", "title": "handles", "to": "imbalanced data"}, {"arrows": "to", "from": "SQUASH loss function", "label": "is", "title": "is", "to": "computationally efficient"}, {"arrows": "to", "from": "Validation", "label": "is performed on", "title": "is performed on", "to": "USA"}, {"arrows": "to", "from": "Validation", "label": "is performed on", "title": "is performed on", "to": "India"}, {"arrows": "to", "from": "This article", "label": "presents", "title": "presents", "to": "ablation study"}, {"arrows": "to", "from": "Ablation study", "label": "includes", "title": "includes", "to": "different surrogate loss functions"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
