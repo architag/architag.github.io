@@ -30,7 +30,7 @@ def process_files(files):
     for file in files:
         sentences = read_and_sentence_tokenize(file)
         if sentences:
-            logger.log(f"{len(sentences)} total sentences in {file}")
+            logger.info(f"{len(sentences)} total sentences in {file}")
 
 def main():
 
