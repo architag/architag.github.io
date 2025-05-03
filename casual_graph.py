@@ -8,6 +8,7 @@ import pandas as pd
 from nltk import word_tokenize, pos_tag
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
+from tqdm import tqdm
 
 # Define causal trigger phrases (from FrameNet / fig S3B)
 causal_triggers = {
@@ -88,12 +89,17 @@ def process_files(files):
     all_step1_rows = []
     all_step3_rows = []
 
-    for file in files[:2]:
+    for file in files[:10]:
         sentences = read_and_sentence_tokenize(file)
         if not sentences:
             continue
 
         logger.info(f"{len(sentences)} total sentences in {file}")
+        # results = []
+        # for sentence in tqdm(sentences):
+        #     # logger.info(f"Processing sentence: {sentence}")
+        #     # Detect frames in the sentence
+        #     results.append(frame_transformer.detect_frames(sentence))
         results = frame_transformer.detect_frames_bulk(sentences)
 
         for res in results:
