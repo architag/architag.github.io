@@ -35,7 +35,7 @@ def process_files(files):
 def main():
 
     parser = argparse.ArgumentParser(description="Process text files and extract sentences.")
-    parser.add_argument('--data_dir', type="str", help='Directory of text files to process')
+    parser.add_argument('--data_dir', type=str, help='Directory of text files to process')
     args = parser.parse_args()
 
     # Read all .txt files in the data_dir using glob
