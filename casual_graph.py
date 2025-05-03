@@ -40,7 +40,7 @@ def main():
 
     # Read all .txt files in the data_dir using glob
     files = glob.glob(f"{args.data_dir}/**/*.txt")
-
+    logger.info(f"Found {len(files)} files in {args.data_dir}")
     process_files(files)
 
 if __name__ == "__main__":
