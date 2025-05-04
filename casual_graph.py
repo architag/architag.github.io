@@ -118,7 +118,7 @@ def process_files(files):
                                 'file': file
                             }
                             all_step1_rows.append(row)
-                            if sentence_has_causal_trigger(res.sentence):
+                            if sentence_has_causal_trigger(res.sentence, frame.trigger_location):
                                 all_step3_rows.append(row)
 
     # Create DataFrames
