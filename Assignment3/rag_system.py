@@ -11,9 +11,9 @@ import logging
 from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
 from sklearn.preprocessing import normalize
 import pandas as pd
-from tqdm import tqdm  # For better display in notebooks/Colab
+from tqdm import tqdm 
+from causal_score import RagScore
 
-# Configure logging for better display in Colab
 import sys
 import argparse
 logging.basicConfig(
@@ -301,6 +301,28 @@ Answer:"""
         
         return pd.DataFrame(results)
 
+def load_reference_questions():
+    """
+    Load reference questions from the CSV file.
+    
+    Returns:
+        list: List of dictionaries with reference context and question
+    """
+    eval_data = []
+    try:
+        with open('reference_questions.csv', 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                eval_data.append({
+                    "ref": row["Reference Context"],
+                    "ques": row["Question"]
+                })
+    except Exception as e:
+        print(f"Error loading reference questions: {e}")
+        return []
+    
+    return eval_data
+
 def compare_with_finetuned(rag_system: RAGSystem, finetuned_model_path: str, questions: List[str]) -> pd.DataFrame:
     finetuned_generator = LLaMAGenerator(finetuned_model_path)
     
@@ -367,33 +389,50 @@ if __name__ == "__main__":
     print(f"Question: {question}")
     print(f"Answer: {result['answer']}")
     print(f"Total time: {result['performance']['total_time']:.2f} seconds")
+
+    eval_data = load_reference_questions()
+    results = []
+    for eval_item in eval_data:
+        rag_result = rag.answer_question(eval_item["ques"])
+        results.append({
+            "ques": eval_item["ques"],
+            "pred": rag_result["answer"],
+            "ref": eval_item["ref"]
+        })
     
-    if BENCHMARK:
-        benchmark_questions = [
-            "How has the average global temperature changed over the last 100 years?",
-            "What are the top 5 regions most affected by climate change today?",
-            "Which sectors contribute the most to global CO₂ emissions?",
-            "What is the current atmospheric concentration of CO₂, and how does it compare to pre-industrial levels?",
-            "Has the frequency of extreme weather events (e.g., heatwaves, hurricanes) increased in the last 50 years?",
-            "Which areas are projected to face the highest risk of sea level rise by 2050?",
-            "How is climate change affecting global biodiversity and endangered species?",
-            "What are the projected temperature and precipitation changes for my region in the next 20 years?",
-            "What will happen if global warming exceeds 2°C above pre-industrial levels?",
-            "Which countries are on track to meet their Paris Agreement targets?"
-        ]
-        embedding_model_name_str = EMBEDDING_MODEL.split("/")[-1]
-        index_name = INDEX_PATH.split("/")[1]
-        benchmark_results = rag.benchmark(benchmark_questions)
-        print("\nBenchmark Results:")
-        print(benchmark_results)
-        benchmark_file_name = f'benchmark_results_{index_name}_{embedding_model_name_str}.csv'
-        benchmark_results.to_csv(benchmark_file_name, index=False)
-        print("\nBenchmark Results saved to %s" % benchmark_file_name)
+    # results_df = pd.DataFrame(results)
+    # results_df.to_csv("results_causal_questions.csv", index=False)
+    
+    causal_score = RagScore()
+    causal_score.evaluate_causal_score(results)
+    causal_score.write_to_csv(results)
+    
+    # if BENCHMARK:
+    #     benchmark_questions = [
+    #         "How has the average global temperature changed over the last 100 years?",
+    #         "What are the top 5 regions most affected by climate change today?",
+    #         "Which sectors contribute the most to global CO₂ emissions?",
+    #         "What is the current atmospheric concentration of CO₂, and how does it compare to pre-industrial levels?",
+    #         "Has the frequency of extreme weather events (e.g., heatwaves, hurricanes) increased in the last 50 years?",
+    #         "Which areas are projected to face the highest risk of sea level rise by 2050?",
+    #         "How is climate change affecting global biodiversity and endangered species?",
+    #         "What are the projected temperature and precipitation changes for my region in the next 20 years?",
+    #         "What will happen if global warming exceeds 2°C above pre-industrial levels?",
+    #         "Which countries are on track to meet their Paris Agreement targets?"
+    #     ]
+    #     embedding_model_name_str = EMBEDDING_MODEL.split("/")[-1]
+    #     index_name = INDEX_PATH.split("/")[1]
+    #     benchmark_results = rag.benchmark(benchmark_questions)
+    #     print("\nBenchmark Results:")
+    #     print(benchmark_results)
+    #     benchmark_file_name = f'benchmark_results_{index_name}_{embedding_model_name_str}.csv'
+    #     benchmark_results.to_csv(benchmark_file_name, index=False)
+    #     print("\nBenchmark Results saved to %s" % benchmark_file_name)
         
-        comparison_results = compare_with_finetuned(rag, FINETUNED_MODEL_PATH, benchmark_questions)
-        print("\nComparison with Fine-tuned Model:")
-        print(comparison_results)
-        comparison_file_name = f'comparison_results_{index_name}_{embedding_model_name_str}.csv'
-        comparison_results.to_csv(comparison_file_name, index=False)
-        print("\nComparison with Fine-tuned Model saved to %s" % comparison_file_name)
-        print("\nAll tasks completed.")
+    #     comparison_results = compare_with_finetuned(rag, FINETUNED_MODEL_PATH, benchmark_questions)
+    #     print("\nComparison with Fine-tuned Model:")
+    #     print(comparison_results)
+    #     comparison_file_name = f'comparison_results_{index_name}_{embedding_model_name_str}.csv'
+    #     comparison_results.to_csv(comparison_file_name, index=False)
+    #     print("\nComparison with Fine-tuned Model saved to %s" % comparison_file_name)
+    #     print("\nAll tasks completed.")
