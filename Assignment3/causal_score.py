@@ -1,7 +1,7 @@
 from bert_score import score
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch, torch.nn.functional as F
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
 import pandas as pd
