@@ -1,41 +1,66 @@
-# Step 1: Install ragas (run in terminal)
-# pip install ragas
+# local_ragas_like_eval.py
 
-# Step 2: Prepare your data
-from datasets import Dataset
+import torch
+import pandas as pd
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from sentence_transformers import SentenceTransformer, util
 
-data = {
-    "question": [
-        "What is climate change?",
-        "How does CO2 affect global warming?"
-    ],
-    "answer": [
-        "Climate change refers to long-term shifts in temperatures and weather patterns.",
-        "CO2 traps heat in the atmosphere, leading to global warming."
-    ],
-    "contexts": [
-        ["Climate change refers to long-term shifts in temperatures and weather patterns."],
-        ["CO2 is a greenhouse gas that traps heat in the atmosphere."]
-    ]
-}
+# 1. Load local models
+nli_model_name = "microsoft/deberta-xlarge-mnli"
+nli_tokenizer = AutoTokenizer.from_pretrained(nli_model_name)
+nli_model = AutoModelForSequenceClassification.from_pretrained(nli_model_name)
 
-ds = Dataset.from_dict(data)
+embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Step 3: Import metrics
-from ragas.metrics import Faithfulness, ResponseRelevancy, LLMContextPrecisionWithoutReference
-
-metrics = [
-    Faithfulness(),
-    ResponseRelevancy(),
-    LLMContextPrecisionWithoutReference()
+# 2. Demo data
+data = [
+    {
+        "question": "How does deforestation contribute to climate change?",
+        "contexts": [
+            "Deforestation reduces the amount of CO2 absorbed by trees, leading to higher atmospheric concentrations of greenhouse gases."
+        ],
+        "answer": "Deforestation increases CO2 levels in the atmosphere because trees that absorb carbon are removed."
+    },
+    {
+        "question": "What role do aerosols play in climate cooling?",
+        "contexts": [
+            "Aerosols scatter sunlight and can lead to a net cooling effect by increasing the Earth's albedo."
+        ],
+        "answer": "Aerosols help cool the planet by scattering sunlight and increasing reflectivity."
+    }
 ]
 
-# Step 4: Evaluate
-from ragas import evaluate
+# 3. Define faithfulness scorer using NLI
+def compute_faithfulness(premise, hypothesis):
+    inputs = nli_tokenizer(premise, hypothesis, return_tensors="pt", truncation=True).to(nli_model.device)
+    with torch.no_grad():
+        logits = nli_model(**inputs).logits
+    probs = torch.softmax(logits, dim=1)
+    entailment_score = probs[0][2].item()  # index 2 = entailment
+    return entailment_score
 
-results = evaluate(ds, metrics=metrics)
-print(results)
+# 4. Define answer relevancy using cosine similarity
+def compute_relevance(question, answer):
+    embeddings = embedder.encode([question, answer], convert_to_tensor=True)
+    return util.pytorch_cos_sim(embeddings[0], embeddings[1]).item()
 
-# Step 5: Optional - convert to DataFrame
-df = results.to_pandas()
-print(df.head())
+# 5. Evaluate
+results = []
+for row in data:
+    context = " ".join(row["contexts"])
+    answer = row["answer"]
+    question = row["question"]
+
+    faith = compute_faithfulness(context, answer)
+    rel = compute_relevance(question, answer)
+
+    results.append({
+        "question": question,
+        "faithfulness": round(faith, 3),
+        "answer_relevance": round(rel, 3),
+    })
+
+# 6. Print results
+df = pd.DataFrame(results)
+print("\n=== Local RAG Evaluation Results ===")
+print(df.to_markdown(index=False))
