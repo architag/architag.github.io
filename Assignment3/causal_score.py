@@ -2,6 +2,7 @@ from bert_score import score
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch, torch.nn.functional as F
 from langchain.embeddings import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer, util
 import numpy as np
 import pandas as pd
 import csv
@@ -9,7 +10,7 @@ import csv
 class RagScore:
 
     def __init__(self):
-        self.semantic_similarity_embeddings = HuggingFaceEmbeddings(model_name="climatebert/distilroberta-base-climate-f")
+        self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
         self.entailment_model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/nli-deberta-v3-base")
         self.entailment_tokenizer = AutoTokenizer.from_pretrained("cross-encoder/nli-deberta-v3-base")
 
@@ -32,23 +33,26 @@ class RagScore:
             
         return entailment_score
 
-    def compute_semantic_similarity(self, generated, reference):
-        """
-        Compute semantic similarity between generated and reference text using embeddings.
+    # def compute_semantic_similarity(self, generated, reference):
+    #     """
+    #     Compute semantic similarity between generated and reference text using embeddings.
         
-        Args:
-            generated (str): Generated answer text
-            reference (str): Reference answer text
+    #     Args:
+    #         generated (str): Generated answer text
+    #         reference (str): Reference answer text
             
-        Returns:
-            float: Semantic similarity score (cosine similarity)
-        """
-        gen_embedding = self.semantic_similarity_embeddings.embed_query(generated)
-        ref_embedding = self.semantic_similarity_embeddings.embed_query(reference)
-        gen_embedding = np.array(gen_embedding)
-        ref_embedding = np.array(ref_embedding)
-        similarity = np.dot(gen_embedding, ref_embedding) / (np.linalg.norm(gen_embedding) * np.linalg.norm(ref_embedding))
-        return float(similarity)
+    #     Returns:
+    #         float: Semantic similarity score (cosine similarity)
+    #     """
+    #     gen_embedding = self.semantic_similarity_embeddings.embed_query(generated)
+    #     ref_embedding = self.semantic_similarity_embeddings.embed_query(reference)
+    #     gen_embedding = np.array(gen_embedding)
+    #     ref_embedding = np.array(ref_embedding)
+    #     similarity = np.dot(gen_embedding, ref_embedding) / (np.linalg.norm(gen_embedding) * np.linalg.norm(ref_embedding))
+    #     return float(similarity)
+    def compute_relevance(self, question, answer):
+        embeddings = self.embedder.encode([question, answer], convert_to_tensor=True)
+        return util.pytorch_cos_sim(embeddings[0], embeddings[1]).item()
 
     def compute_lexical_f1(self, generated, reference):
         """
@@ -89,7 +93,7 @@ class RagScore:
         for eval_item in eval_data:
             scores = {
                 "lexical_f1": self.compute_lexical_f1(eval_item["pred"], eval_item["ref"]),
-                "semantic_similarity": self.compute_semantic_similarity(eval_item["pred"], eval_item["ref"]),
+                "semantic_similarity": self.compute_relevance(eval_item["pred"], eval_item["ref"]),
                 "entailment": self.compute_entailment_score(eval_item["pred"], eval_item["ref"])
             }
             scores["combined_score"] = (
