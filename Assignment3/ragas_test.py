@@ -22,7 +22,6 @@ data = {
 ds = Dataset.from_dict(data)
 
 # Step 3: Import metrics
-OPEN_AI_KEY="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"
 from ragas.metrics import Faithfulness, ResponseRelevancy, LLMContextPrecisionWithoutReference
 
 metrics = [
