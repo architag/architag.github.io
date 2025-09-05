@@ -1,5 +1,5 @@
 export const profile = {
-	fullName: 'Your Name',
+	fullName: 'Archit Agrawal',
 	title: '',
 	institute: '',
 	author_name: '', // Author name to be highlighted in the papers section
@@ -10,10 +10,10 @@ export const profile = {
 
 // Set equal to an empty string to hide the icon that you don't want to display
 export const social = {
-	email: '',
-	linkedin: '',
-	x: 'https://www.x.com/',
-	github: '',
+	email: 'archit.agrawal@nyu.edu',
+	linkedin: 'https://www.linkedin.com/in/archit-agrawal-282086145/',
+	x: 'https://x.com/architagrawal31',
+	github: 'https://github.com/architag',
 	gitlab: '',
 	scholar: '',
 	inspire: '',
@@ -25,8 +25,8 @@ export const template = {
 	website_url: 'https://localhost:4321', // Astro needs to know your site’s deployed URL to generate a sitemap. It must start with http:// or https://
 	menu_left: false,
 	transitions: true,
-	lightTheme: 'light', // Select one of the Daisy UI Themes or create your own
-	darkTheme: 'dark', // Select one of the Daisy UI Themes or create your own
+	lightTheme: 'winter', // Select one of the Daisy UI Themes or create your own
+	darkTheme: 'dim', // Select one of the Daisy UI Themes or create your own
 	excerptLength: 200,
 	postPerPage: 5,
     base: '' // Repository name starting with /

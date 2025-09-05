@@ -19,13 +19,22 @@ export interface Skill {
   description: string;
 }
 
-export interface Publication {
+export interface Project {
   title: string;
-  authors: string;
-  journal: string;
   time: string;
   link?: string;
   abstract?: string;
+  details?: ProjectDetail[];
+}
+
+export interface ProjectDetail {
+  heading: string;
+  content: ProjectDetailContent[];
+}
+
+export interface ProjectDetailContent {
+  itemHeading: string;
+  itemContent: string;
 }
 
 export function isExperience(element: Experience | Education): element is Experience {
@@ -36,10 +45,10 @@ export function isEducation(element: Education | Experience): element is Educati
   return 'school' in element && 'degree' in element;
 }
 
-export function isSkill(element: Skill | Publication): element is Skill {
+export function isSkill(element: Skill | Project): element is Skill {
   return 'description' in element;
 }
 
-export function isPublication(element: Skill | Publication): element is Publication {
-  return 'authors' in element;
+export function isProject(element: Skill | Project): element is Project {
+  return 'link' in element;
 }

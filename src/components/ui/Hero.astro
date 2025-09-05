@@ -8,15 +8,21 @@ const {fullName, title, institute, profilePicture} = Astro.props
 ---
 <div class='flex-1'>
   <h1 class='text-4xl font-bold mb-4'>
-    Welcome! I'm <span class='text-secondary'>{fullName}</span>
+    Hello! I'm <span class='text-secondary'>{fullName}</span>
   </h1>
   <p class='text-xl text-gray-600 mb-4'>{title}{institute ? ` at ${institute}` : ''}</p>
   <p class='text-lg mb-6'>
-    Brief impactful description of your research focus and academic mission.
-    Highlight your key contributions and areas of expertise.
+    CS @ NYU | Backend Engineer | Exploring ML, Building Scalable Systems
+  </p>
+  <p class='text-md mb-6'>
+    I'm a software developer with 3+ years of experience spanning machine learning, backend systems, and infrastructure engineering. Over the years, I've worked on 
+    designing microservices and data pipelines to experimenting with deep learning models and distributed training.
+    <br/><br/>
+    Currently, I'm pursuing my MSCS at NYU Courant Institute of Mathematical Sciences, where I'm exploring the latest in Machine Learning and System Design.
+    I enjoy tackling complex problems, breaking them down, and building reliable, efficient and scalable solutions.
   </p>
   <div class='flex gap-4'>
-    <SocialIcons />
+    <!-- <SocialIcons /> -->
   </div>
 </div>
 <div class='size-72 lg:block hidden'>

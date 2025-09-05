@@ -1,5 +1,4 @@
 ---
-import {template} from '@/settings'
 interface Props {
 	title: string
 	description: string
@@ -9,6 +8,8 @@ interface Props {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
 const { title, description, image } = Astro.props
+
+import { template } from "@/settings";
 ---
 
 <meta charset='utf-8' />
@@ -47,9 +48,8 @@ const { title, description, image } = Astro.props
 
 <!-- Theme selector scripts -->
 <script is:inline>
-  // Get stored theme or default to light
   const getStoredTheme = () => {
-    return localStorage.getItem('theme') || 'light';
+    return localStorage.getItem('theme') || 'winter';
   }
 
   // Apply theme immediately to prevent flash
@@ -58,6 +58,7 @@ const { title, description, image } = Astro.props
 
   // Re-apply theme after navigation
   document.addEventListener('astro:after-swap', () => {
+    console.log('here');
     const currentTheme = getStoredTheme();
     document.documentElement.setAttribute('data-theme', currentTheme);
   });
@@ -68,6 +69,7 @@ const { title, description, image } = Astro.props
 
   // Re-initialize after Astro view transitions
   document.addEventListener('astro:after-swap', () => {
+    console.log('here2');
     themeChange(false); // false = don't persist to localStorage
   });
 </script>

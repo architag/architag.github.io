@@ -1,0 +1,57 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { projects } from "@/data/cv";
+import type { ProjectDetailContent } from "@/types/cv";
+
+const ALL_PROJECTS = projects; // This will be replaced with dynamic data later
+---
+
+<Layout title="Projects | Archit Agrawal">
+  <div class="prose max-w-none">
+    <h1 class="text-3xl font-bold mb-8">Projects</h1>
+
+    <div class="space-y-8">
+      {
+        ALL_PROJECTS.map((project) => (
+          <div class="card bg-base-200">
+            <div class="card-body">
+              <h2 class="card-title text-xl">
+                <a href={project.link} target="_blank" class="hover:text-accent">
+                  {project.title}
+                </a>
+              </h2>
+              <p class="text-sm mb-3">
+                <span class="italic">{project.time}</span>
+              </p>
+              <p class="text-sm text-base-content/80 not-prose">{project.abstract}</p>
+              {project.details && project.details.map((detail) => (
+                // <div class="mt-4">
+                  <p class="text-sm font-bold mb-2">{detail.heading}</p>
+                  <p class="text-sm text-base-content/80 not-prose">{detail.content.map((contentItem: ProjectDetailContent) => (
+                    <span class="font-bold">{contentItem.itemHeading}</span>
+                    <span class="text-sm text-base-content/80 not-prose">{contentItem.itemContent}</span><br/>
+                  ))}</p>
+                // </div>
+              ))}
+              <div class="card-actions justify-end mt-4">
+                <a href={project.link} target="_blank" class="btn btn-sm btn-secondary text-secondary-content">
+                  Source Code
+                </a>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- <div class="flex justify-center mt-8">
+      <div class="join">
+        <button class="join-item btn btn-sm">«</button>
+        <button class="join-item btn btn-sm">1</button>
+        <button class="join-item btn btn-sm btn-active">2</button>
+        <button class="join-item btn btn-sm">3</button>
+        <button class="join-item btn btn-sm">»</button>
+      </div>
+    </div> -->
+  </div>
+</Layout>
