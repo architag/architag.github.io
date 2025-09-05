@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy Astro Site to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main]  # Change if your main branch has a different name
   workflow_dispatch:
 
 permissions:
@@ -11,25 +11,29 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      # 1. Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site output
+
+      # 2. Install dependencies, build site, and generate .nojekyll
+      - name: Build Astro site
         uses: withastro/action@v4
         with:
-          path: .
-          node-version: 22
-          build-dir: dist
+          path: .          # Root of your Astro project
+          # node-version: 22   # Optional: specify Node version
+          # package-manager: pnpm@latest  # Optional, auto-detected
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
+      # 3. Create .nojekyll to prevent GitHub Pages from trying to use Jekyll
+      - name: Disable Jekyll
+        run: |
+          touch dist/.nojekyll
+
+      # 4. Deploy the built site to GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
+        id: deployment
+        with:
+          folder: dist  # Astro output folder
