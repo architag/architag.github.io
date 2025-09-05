@@ -29,7 +29,7 @@ export const template = {
 	darkTheme: 'dim', // Select one of the Daisy UI Themes or create your own
 	excerptLength: 200,
 	postPerPage: 5,
-    base: '' // Repository name starting with /
+    base: '/architag.github.io' // Repository name starting with /
 }
 
 export const seo = {
